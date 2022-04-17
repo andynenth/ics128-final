@@ -1,0 +1,121 @@
+.header-main {
+    position: relative;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.btn-light {
+    background-color: #fff;
+    border-color: #dee2e6;
+    color: #212529;
+}
+.btn i {
+    min-width: 16px;
+}
+.btn-light i {
+    color: #9da1a7;
+}
+.brand-wrap, .navbar-brand {
+    opacity: .75;
+}
+@media (max-width: 768px) {
+    .card-product-list .img-wrap {
+            border-bottom: 1px solid #dee2e6;
+        }
+}
+.card-product-list .img-wrap {
+    height: 220px;
+    padding: 0.5rem;
+}
+[class*=card-product] .img-wrap {
+    position: relative;
+}
+.img-wrap {
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+    display: block;
+}
+[class*=card-product] .img-wrap img {
+    height: 100%;
+    max-width: 100%;
+    width: auto;
+}
+.img-wrap img {
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+[class*=card-product] a.title {
+    display: block;
+    text-decoration: none;
+}
+.card.card-product-grid, .card.card-product-list {
+    box-shadow: 0 1px 2px rgb(51 51 51 / 7%);
+}
+
+.card-product-list {
+    margin-bottom: 20px;
+}
+.card-product-list .title {
+    color: #212529;
+}
+a.title, .title a, a .title {
+    text-decoration: none;
+}
+.rating-stars {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    white-space: nowrap;
+    clear: both;
+}
+.rating-stars li.stars-active {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.rating-stars li {
+    display: block;
+    text-overflow: clip;
+    white-space: nowrap;
+    z-index: 1;
+}
+.rating-stars img {
+    height: 16px;
+    max-width: none;
+}
+.label-rating {
+    margin-left: 5px;
+    margin-right: 5px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.dot {
+    font-style: normal;
+    opacity: .5;
+}
+.dot:after {
+    content: "•";
+    display: inline-block;
+}
+[class*=card-product] p {
+    margin-bottom: 0;
+}
+.card-product-list .info-aside {
+    padding: 1.25rem 1.25rem;
+    border-left: 1px solid #dee2e6;
+    height: 100%;
+}
+[class*=card-product] .price {
+    color: #212529;
+}
+[class*=card-product] p {
+    margin-bottom: 0;
+}
+hr {
+    opacity: 0.2;
+}
