@@ -173,8 +173,20 @@ hr {
 
 .itemside .title {
     display: block;
-    margin-bottom: 0rem;
+    margin-bottom: 0;
 }
 a.title, .title a, a .title {
     text-decoration: none;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 1rem;
+    margin-bottom: 5px;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    margin-top: 4px;
+    margin-right: 2px;
+    font-size: 90%;
 }
