@@ -1,3 +1,44 @@
+class Cart{
+    constructor() {
+        this.productList = [];
+    }
+    // return true if item is new
+    addNewItem(item){
+
+        var index = this.productList.findIndex(product => {
+            return product.item.id === item.id;
+        });
+        var isNewElement = index === -1;
+        if(isNewElement){
+            this.productList.push({item:item, quantity:1})
+        }
+        else {
+            this.productList[index].quantity++;
+        }
+        return isNewElement;
+    }
+    getItems(){
+        return this.productList;
+    }
+    removeAnItem(id){
+        var cartIsEmpty;
+        var index = this.productList.findIndex(product => {
+            return product.item.id === id;
+        });
+        if (this.productList[index].quantity > 1){
+            this.productList[index].quantity--;
+        }else {
+            this.productList.splice(index,1);
+        }
+        cartIsEmpty = this.productList.length === 0;
+        return cartIsEmpty; //return true once the last element is removed
+    }
+    discardCart(){
+        this.productList = [];
+    }
+}
+const cart = new Cart();
+let cartItems = [];
 let currentPage = 1;
 let myObj;
 const pageSize = 3;
@@ -21,51 +62,58 @@ http_request.open("GET", "https://fakestoreapi.com/products", true);
 http_request.send();
 
 $(document).ready(function() {
-    $(document).on('click','#nextBtn', function(){
-        currentPage++;
-        $('#items').html(bindDataToList(myObj));
-    });
-    $(document).on('click','#prevBtn', function(){
-        currentPage--;
-        $('#items').html(bindDataToList(myObj));
-    });
     $('#cart').html(htmlCartEmpty);
 });
+$(document).on('click','#nextBtn', function(){
+    currentPage++;
+    $('#items').html(bindDataToList(myObj));
+});
+$(document).on('click','#prevBtn', function(){
+    currentPage--;
+    $('#items').html(bindDataToList(myObj));
+});
+$(document).on('click','#clearCart', function(){
+    cart.discardCart();
+    cartItems.length = 0;
+    $('#cart').html(htmlCartEmpty);
+    updateItemsAmount();
+});
 
+function updateItemsAmount(){
 
-
-class Cart{
-    constructor() {
-        this.itemlist = [];
+    console.log(cartItems.length);
+    if(cartItems.length===0){
+        $('#cartBtn').html('');
     }
-    // return true if item is new
-    addNewItem(item){
-        var index = this.itemlist.findIndex(object => {
-            return object.item.id === item.id;
-        });
-        var isNewElement = index === -1;
-        if(isNewElement){
-            this.itemlist.push({item:item, quantity:1})
-        }
-        else {
-            this.itemlist[index].quantity++;
-        }
-        return isNewElement;
-    }
-    getItems(){
-        return this.itemlist;
+    else {
+        $('#cartBtn').html(`<b class="badge bg-danger rounded-pill">${cartItems.length}</b>`);
     }
 }
 
-let cart = new Cart();
-
-
+function removeItem(id) {
+    cartItems.splice(cartItems.findIndex(item => {
+        return item.id === id;
+    }),1);
+    if(cart.removeAnItem(id)){
+        $('#cart').html(htmlCartEmpty);
+    }else {
+        $('#cart').html(getCartBody());
+    }
+    updateItemsAmount();
+}
 
 function addToCart(id){
-   var index = myObj.findIndex(object => {
-      return object.id === id;
-   });
-    cart.addNewItem(myObj[index]);
+    var index = myObj.findIndex(product => {
+        return product.id === id;
+    });
+    var item = myObj[index];
+    cart.addNewItem(item);
+    cartItems.push(item);
+    $('#cart').html(getCartBody());
+    updateItemsAmount();
+}
+
+function getCartBody(){
     let items = cart.getItems();
     var htmlItems = '';
     var subtotalPrice = 0;
@@ -77,9 +125,9 @@ function addToCart(id){
                 <img src="${items[i].item.image}" class="img-sm rounded border" alt="${items[i].item.title}">
             </div>
             <div class="info w-100">
-                <span class="text-muted float-end">$${items[i].item.price*items[i].quantity}</span>
-                <h6 class="title">${items[i].item.title}</h6>
-                <a href="#" class="btn-link text-danger"><small>Remove</small></a>
+                <span class="text-muted float-end">$${(items[i].item.price*items[i].quantity).toFixed(2)}</span>
+                <small class="title">${items[i].item.title}</small>
+                <a href="#" class="btn-link text-danger" onclick="removeItem(${items[i].item.id})"><small>Remove</small></a>
             </div>
         </div>`;
     }
@@ -96,11 +144,11 @@ function addToCart(id){
                     <button class="btn w-100 btn-primary" type="button">
                         <i class="fa-solid fa-circle-check"></i> Checkout
                     </button>
-                    <button class="btn w-100 btn-outline-danger" type="button">
+                    <button id="clearCart" class="btn w-100 btn-outline-danger" type="button">
                         <i class="fa-solid fa-trash-can"></i> Clear Cart
                     </button>
                 </div>`;
-    $('#cart').html(htmlItems);
+    return htmlItems;
 }
 
 // return displayed items
@@ -146,9 +194,6 @@ function bindDataToList (data) {
     return result+pagination;
 }
 
-
-
-// convert row to html
 function getItemCard(item){
     var ratingPercentage = item.rating.rate/5*100;
     return `<div class="card card-product-list">
@@ -177,7 +222,7 @@ function getItemCard(item){
                     <div class="col-xl-3 col-md-3 col-sm-5">
                         <div class="info-aside">
                             <div class="price-wrap">
-                                <span class="price h5"> $${item.price} </span>
+                                <span class="price h5"> $${item.price.toFixed(2)} </span>
                             </div> <!-- info-price-detail // -->
                             <br>
                             <div class="mb-3">
