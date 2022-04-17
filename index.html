@@ -24,9 +24,9 @@
                 </div>
                 <div class="order-lg-last col-lg-5 col-sm-8 col-8">
                     <div class="float-end">
-                        <a data-bs-toggle="offcanvas" href="#offcanvas_cart" class="btn btn-light">
+                        <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
                             <i class="fa fa-shopping-cart"></i> <span class="ms-1">My cart </span>
-                        </a>
+                        </button>
                     </div>
                 </div> <!-- col end.// -->
                 <div class="col-lg-5 col-md-12 col-12">
@@ -41,15 +41,32 @@
     <div class="container">
 
         <div class="row">
-            <main class="col-lg-9">
+            <main class="col-lg-12">
                 <!-- ========= content items ========= -->
                 <div id="items"></div>
 
                 <!-- ========= content items .// ========= -->
 
+                <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Items in cart</h5>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
 
+                    <div class="offcanvas-body">
+                        <div class="itemside align-items-center mb-4">
+                            <div class="aside">
+                                <b class="badge bg-secondary rounded-pill">2</b>
+                                <img src="https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg" class="img-sm rounded border">
+                            </div>
 
-
+                            <div class="info w-100"> <a href="#" class="btn btn-sm btn-outline-danger float-end">Remove</a> <h6 class="title">Extra cable</h6> <span class="text-muted">Price $23.00</span> </div>
+                        </div>
+                        <hr>
+                        <dl class="dlist-align"> <dt> Total: </dt> <dd class="text-end"> <strong class="text-dark">$1357.97</strong> </dd> </dl>
+                        <a href="#" class="btn btn-primary w-100 my-4">Checkout</a>
+                    </div>
+                </div>
 
 
             </main> <!-- col .// -->

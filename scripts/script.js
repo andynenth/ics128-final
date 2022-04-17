@@ -1,33 +1,39 @@
-currentPage = 1;
+let currentPage = 1;
+let myObj;
+const pageSize = 3;
+
+var http_request = new XMLHttpRequest();
+http_request.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+        myObj = JSON.parse(this.responseText);
+        var result = bindDataToList(myObj);
+    }
+    $('#items').html(result);
+};
+http_request.open("GET", "https://fakestoreapi.com/products", true);
+http_request.send();
 
 $(document).ready(function() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            var myObj = JSON.parse(this.responseText);
-            // PARSE JSON data (in myObj) and insert into variable "result"
-            var result = bindDataToList(myObj);
-
-        }
-        // display the result in HTML
-        //document.getElementById("items").innerHTML = result;
-        $('#items').html(result);
-    };
-    xhttp.open("GET", "https://fakestoreapi.com/products", true);
-    xhttp.send();
+    $(document).on('click','#nextBtn', function(){
+        currentPage++;
+        $('#items').html(bindDataToList(myObj));
+    })
+    $(document).on('click','#prevBtn', function(){
+        currentPage--;
+        $('#items').html(bindDataToList(myObj));
+    })
 });
 
 
 // return displayed items
 function bindDataToList (data) {
-    var pageSize = 4;
     var displayItemsFrom = currentPage*pageSize-pageSize;
     var displayItemsTo = currentPage*pageSize;
     var result='';
-    var isNotTheLastPage = false;
+    var isNotTheLastPage = true;
     if (data != null && data) {
         if(displayItemsTo>data.length){
-            isNotTheLastPage = true;
+            isNotTheLastPage = false;
             displayItemsTo = data.length;
         }
         for (var i = displayItemsFrom; i < displayItemsTo; i++) {
@@ -37,13 +43,14 @@ function bindDataToList (data) {
 
     var pageItemL = '';
     var pageItemR = '';
-    console.log(currentPage-1);
-    if(!(currentPage-1<1)){
-        pageItemL = `<li class="page-item"><a class="page-link" href="#">${currentPage-1}</a></li>`
+
+    if((currentPage-1>0)){
+        pageItemL = `<li class="page-item"><button id="prevBtn" class="page-link">Prev</button></li>
+                    <li class="page-item"><button id="prevBtn" class="page-link" href="#">${currentPage-1}</a></li>`;
     }
     if(isNotTheLastPage){
-        pageItemR = `<li class="page-item"><a class="page-link" href="#">${currentPage+1}</a></li>
-                     <li class="page-item"><a class="page-link" href="#">Next</a> </li>`;
+        pageItemR = `<li class="page-item"><button id="nextBtn" class="page-link">${currentPage+1}</button></li>
+                    <li class="page-item"><button id="nextBtn" class="page-link">Next</button></li>`;
     }
     var pagination = `<hr>
                 <footer class="d-flex mt-4">
@@ -51,9 +58,9 @@ function bindDataToList (data) {
                         <ul class="pagination">
                             ${pageItemL}
                             <li class="page-item active" aria-current="page">
-                                <span class="page-link">2</span>
+                                <span class="page-link">${currentPage}</span>
                             </li>
-                            
+                            ${pageItemR}
                         </ul>
                     </nav>
                 </footer>`
