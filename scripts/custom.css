@@ -159,7 +159,7 @@ hr {
 .img-xs, .img-sm, .img-md, .img-lg {
     display: inline-block;
     -o-object-fit: cover;
-    object-fit: cover;
+    object-fit: contain;
     flex-shrink: 0;
     flex-grow: 0;
 }
@@ -189,4 +189,63 @@ a.title, .title a, a .title {
     margin-top: 4px;
     margin-right: 2px;
     font-size: 90%;
+}
+
+
+
+
+
+
+/* Style the input fields */
+input {
+    padding: 10px;
+    width: 100%;
+    font-size: 17px;
+    border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+    background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+    display: none;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbbbbb;
+    border: none;
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.5;
+}
+
+/* Mark the active step: */
+.step.active {
+    opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+    background-color: #04AA6D;
+}
+strong.price, b.price, .b.price, .fw-bold.price {
+    color: #212529;
+}
+.itemside p {
+    margin-bottom: 0;
+}
+.itemside .info {
+    padding-left: 0.75rem;
+    flex-grow: 1;
+}
+.itemside .aside {
+    position: relative;
+    flex-shrink: 0;
 }

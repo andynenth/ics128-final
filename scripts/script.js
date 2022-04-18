@@ -61,9 +61,31 @@ http_request.onreadystatechange = function () {
 http_request.open("GET", "https://fakestoreapi.com/products", true);
 http_request.send();
 
+
+
 $(document).ready(function() {
     $('#cart').html(htmlCartEmpty);
+    $('#checkoutModal').modal('show');
+    $('#yearPicker').html(function (){
+        var list = `<option value="0">year</option>`;
+        var date = new Date(); // date object
+        var getYear =  date.getFullYear();
+        for (let i = 0; i < 10; i++) {
+            list += `<option value="${getYear + i}">${getYear + i}</option>`;
+        }
+        return list;
+    });
+    $('#cvv').attr('maxlength', 4);
+
+    $('#sameAdrChk').on('click', function (){
+        console.log('same '+ $('#sameAdrChk').val());
+       if($('#sameAdrChk').val()==1){
+           $('#fNameS').val($('#fName').val());
+       }
+    });
+
 });
+
 $(document).on('click','#nextBtn', function(){
     currentPage++;
     $('#items').html(bindDataToList(myObj));
@@ -78,6 +100,10 @@ $(document).on('click','#clearCart', function(){
     $('#cart').html(htmlCartEmpty);
     updateItemsAmount();
 });
+$(document).on('click','#checkout', function(){
+    $('#offcanvasWithBothOptions').offcanvas("hide");
+});
+
 
 function updateItemsAmount(){
 
@@ -141,7 +167,7 @@ function getCartBody(){
                     </dd>
                 </dl>
                 <div class="d-flex gap-2 my-3">
-                    <button class="btn w-100 btn-primary" type="button">
+                    <button id="checkout" class="btn w-100 btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                         <i class="fa-solid fa-circle-check"></i> Checkout
                     </button>
                     <button id="clearCart" class="btn w-100 btn-outline-danger" type="button">
@@ -232,4 +258,259 @@ function getItemCard(item){
                     </div> <!-- col.// -->
                 </div> <!-- row.// -->
             </div>`;
+}
+
+var currentTab = 0; // Current tab is set to be the first tab (0)
+showTab(currentTab); // Display the current tab
+
+function showTab(n) {
+    modalHeader(n);
+    // This function will display the specified tab of the form ...
+    var x = document.getElementsByClassName("tab");
+    x[n].style.display = "block";
+    // ... and fix the Previous/Next buttons:
+    if (n == 0) {
+        document.getElementById("prevBtnCheckout").style.display = "none";
+    } else {
+        document.getElementById("prevBtnCheckout").style.display = "inline";
+    }
+    if (n == (x.length - 1)) {
+        document.getElementById("nextBtnCheckout").innerHTML = "Submit";
+    } else {
+        document.getElementById("nextBtnCheckout").innerHTML = "Next";
+    }
+    // ... and run a function that displays the correct step indicator:
+    fixStepIndicator(n)
+}
+
+function nextPrev(n) {
+    // This function will figure out which tab to display
+    var x = document.getElementsByClassName("tab");
+
+    // Exit the function if any field in the current tab is invalid:
+    if (n == 1 && !validateForm()) return false;
+    // Hide the current tab:
+    x[currentTab].style.display = "none";
+    // Increase or decrease the current tab by 1:
+    currentTab = currentTab + n;
+    // if you have reached the end of the form... :
+    if (currentTab >= x.length) {
+        //...the form gets submitted:
+        document.getElementById("regForm").submit();
+        return false;
+    }
+    // Otherwise, display the correct tab:
+    showTab(currentTab);
+}
+
+function validateForm() {
+    // This function deals with validation of the form fields
+    var x, valid = true;
+    x = document.getElementsByClassName("tab");
+
+    var cardNumber = document.getElementById('cardNumber').value;
+    var cvv = document.getElementById('cvv').value;
+
+    if (currentTab===0){
+        valid = (checkCardNumber(cardNumber) && checkMonth() && checkYear() && checkCVV(cvv));
+    }
+    if (currentTab===1){
+        valid = (checkFName() && checkLName() && checkPhone() && checkEmail() && checkAddress1() && checkAddress2() && checkCity() && checkProvince() && checkCountry() && checkPostal() )
+    }
+
+    // If the valid status is true, mark the step as finished and valid:
+    if (valid) {
+        document.getElementsByClassName("step")[currentTab].className += " finish";
+    }
+    console.log(valid);
+    return valid; // return the valid status
+}
+
+function checkEmail(){
+    var regEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    if(regEx.test(document.getElementById('email').value)){
+        $('#email').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#email').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkPostal(){
+    if(/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(document.getElementById('postal').value)){
+        $('#postal').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#postal').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkCountry(){
+    if (document.getElementById('country').value!=''){
+        $('#country').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#country').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkProvince(){
+    if (document.getElementById('province').value!=''){
+        $('#province').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#province').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkCity(){
+    if (document.getElementById('city').value!=''){
+        $('#city').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#city').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkAddress2(){
+    if (document.getElementById('address2').value!=''){
+        $('#address2').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#address2').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkAddress1(){
+    if (document.getElementById('address1').value!=''){
+        $('#address1').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#address1').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkPhone(){
+    if(/^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$/.test(document.getElementById('phone').value)){
+        $('#phone').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#phone').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkLName(){
+    if (document.getElementById('lName').value!=''){
+        $('#lName').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#lName').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkFName(){
+    if (document.getElementById('fName').value != 0){
+        $('#fName').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#fName').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkCardNumber(cardNumber){
+    var masterCardRegEx = /^5[1-5][0-9]{14}$|^2(?:2(?:2[1-9]|[3-9][0-9])|[3-6][0-9][0-9]|7(?:[01][0-9]|20))[0-9]{12}$/;
+    var visaRegEx = /^3[47][0-9]{13}$/;
+    var americanExpressRegEx = /^4[0-9]{12}(?:[0-9]{3})?$/;
+    if (masterCardRegEx.test(cardNumber)||visaRegEx.test(cardNumber)||americanExpressRegEx.test(cardNumber)){
+        $('#cardNumber').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#cardNumber').removeClass("invalid").addClass("is-invalid");
+        return false;
+    }
+}
+function checkCVV(cvv){
+    var cvvRegex = /^[0-9]{3,4}$/;
+    if (cvvRegex.test(cvv)){
+        $('#cvv').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+    else{
+        $('#cvv').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkMonth(){
+    if (document.getElementById('monthPicker').value == 0){
+        $('#monthPicker').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+    else {
+        $('#monthPicker').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+}
+function checkYear(){
+    if (document.getElementById('yearPicker').value == 0){
+        $('#yearPicker').removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+    else {
+        $('#yearPicker').removeClass("is-invalid").addClass("is-valid");
+        return true;
+    }
+}
+
+function fixStepIndicator(n) {
+    // This function removes the "active" class of all steps...
+    var i, x = document.getElementsByClassName("step");
+    for (i = 0; i < x.length; i++) {
+        x[i].className = x[i].className.replace(" active", "");
+    }
+    //... and adds the "active" class to the current step:
+    x[n].className += " active";
+}
+
+function modalHeader(page){
+    console.log(page);
+    switch (page){
+        case 0:
+            document.getElementById('checkoutModallLabel').innerHTML = 'Checkout'
+            break;
+        case 1:
+            document.getElementById('checkoutModallLabel').innerHTML = 'Billing'
+            break;
+        case 2:
+            document.getElementById('checkoutModallLabel').innerHTML = 'Shipment'
+            break;
+        case 3:
+            document.getElementById('checkoutModallLabel').innerHTML = 'Confirm'
+            break;
+        default:
+            document.getElementById('checkoutModallLabel').innerHTML = 'Checkout'
+            break;
+    }
+
 }
