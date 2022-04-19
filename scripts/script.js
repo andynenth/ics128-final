@@ -97,8 +97,9 @@ $(document).ready(function() {
         }
         return list;
     });
+    // set cvv input lenth
     $('#cvv').attr('maxlength', 4);
-
+    // copy data if check the same address
     $('#sameAdrChk').on('click', function (){
        if($(this).prop("checked")){
            $('#fNameS').val($('#fName').val()).prop( "disabled", true );
@@ -128,6 +129,7 @@ $(document).ready(function() {
 
 });
 
+// prev and next button action
 $(document).on('click','#nextBtn', function(){
     currentPage++;
     $('#items').html(bindDataToList(myObj));
@@ -136,6 +138,7 @@ $(document).on('click','#prevBtn', function(){
     currentPage--;
     $('#items').html(bindDataToList(myObj));
 });
+
 // on click clear card
 $(document).on('click','#clearCart', function(){
     // remove all item from cart
@@ -153,6 +156,7 @@ $(document).on('click','#checkout', function(){
 
 });
 
+// display confirmation step
 function getConfirmBody(){
     var htmlItems = '';
     const items = cart.getItems();
@@ -246,6 +250,7 @@ function addToCart(id){
     updateItemsAmount();
 }
 
+// display items in the cart
 function getCartBody(){
     const items = cart.getItems();
     var htmlItems = '';
@@ -284,12 +289,13 @@ function getCartBody(){
     return htmlItems;
 }
 
-// return displayed items
+// return displayed items in current page
 function bindDataToList (data) {
     var displayItemsFrom = currentPage*pageSize-pageSize;
     var displayItemsTo = currentPage*pageSize;
     var result='';
     var isNotTheLastPage = true;
+
     if (data != null && data) {
         if(displayItemsTo>data.length){
             isNotTheLastPage = false;
@@ -311,6 +317,7 @@ function bindDataToList (data) {
         pageItemR = `<li class="page-item"><button id="nextBtn" class="page-link">${currentPage+1}</button></li>
                     <li class="page-item"><button id="nextBtn" class="page-link">Next</button></li>`;
     }
+    // page number and pagination
     var pagination = `<hr>
                 <footer class="d-flex mt-4">
                     <nav class="ms-3">
@@ -327,7 +334,7 @@ function bindDataToList (data) {
     return result+pagination;
 }
 
-// return offcanvas's body
+// display item on a current page
 function getItemCard(item){
     var ratingPercentage = item.rating.rate/5*100;
     return `<div class="card card-product-list">
@@ -436,6 +443,7 @@ function fixStepIndicator(n) {
 }
 
 function submit() {
+    // convert data from form to a readable JSON string
     let jsonString = `{ 
         "card_number": "${document.getElementById("cardNumber").value}",
         "expiry_month": "${document.getElementById("monthPicker").value}",
@@ -467,7 +475,7 @@ function submit() {
         }
     }`;
     const obj = JSON.parse(jsonString);
-    var http = new XMLHttpRequest();
+
     let form_data = new FormData();
     form_data.append('submission', JSON.stringify(obj));
     fetch('https://deepblue.camosun.bc.ca/~c0180354/ics128/final/',
@@ -476,71 +484,20 @@ function submit() {
             body: form_data
         }).then(response => response.json())
         .then(data => {
+            // display a message if sucess
             $('#successModal').ready(function (){
                 $('#successModalBody').html(sucessMessege);
             }).modal('show');
         })
         .catch((error) => {
+            // display an error message
             $('#successModal').ready(function (){
                 $('#successModalBody').html(JSON.stringify(error));
             }).modal('show');
         });
 }
 
-
-
-//submittest();
-function submittest() {
-    let jsonString = `{
-   "card_number":"4111111111111111",
-   "expiry_month":"03",
-   "expiry_year":"2022",
-   "security_code":"123",
-   "amount":"270.91",
-   "currency":"cad",
-   "billing":{
-      "first_name":"andy",
-      "last_name":"Nenthong",
-      "address_1":"3189 quadrastreet",
-      "address_2":"",
-      "city":"Vancouver",
-      "province":"BC",
-      "country":"CA",
-      "postal":"v8x1e9",
-      "phone":"2368854807",
-      "email":"andy.nenth@gmail.com"
-   },
-   "shipping":{
-      "first_name":"andy",
-      "last_name":"Nenthong",
-      "address_1":"3189 quadrastreet",
-      "address_2":"",
-      "city":"Vancouver",
-      "province":"BC",
-      "country":"CA",
-      "postal":"v8x1e9"
-   }
-}`;
-    const obj = JSON.parse(jsonString);
-    var http = new XMLHttpRequest();
-    var url = 'https://deepblue.camosun.bc.ca/~c0180354/ics128/final/';
-    http.open('POST', url, true);
-
-
-    http.onreadystatechange = function() {//Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-            alert(http.responseText);
-        }
-        else {
-
-        }
-    }
-    http.send(JSON.stringify(obj));
-
-}
-
-
-
+// notice user if input data is incorrect
 function validateForm() {
     // This function deals with validation of the form fields
     var x, valid = true;
@@ -566,6 +523,7 @@ function validateForm() {
     return valid; // return the valid status
 }
 
+// validate email format
 function checkEmail(id){
     var regEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if(regEx.test($(`#${id}`).val())){
@@ -578,6 +536,7 @@ function checkEmail(id){
     }
 }
 
+// validate postal code format
 function checkPostal(id){
     if(/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test($(`#${id}`).val())){
         $(`#${id}`).removeClass("is-invalid").addClass("is-valid");
@@ -589,7 +548,7 @@ function checkPostal(id){
     }
 }
 
-
+// validate phone number format
 function checkPhone(id){
     if(/^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$/.test($(`#${id}`).val())){
         $(`#${id}`).removeClass("is-invalid").addClass("is-valid");
@@ -601,6 +560,7 @@ function checkPhone(id){
     }
 }
 
+// return false if a field is empty
 function isNotEmpty(id){
     if ($(`#${id}`).val()){
         $(`#${id}`).removeClass("is-invalid").addClass("is-valid");
@@ -612,7 +572,7 @@ function isNotEmpty(id){
     }
 }
 
-
+// validate credit card's number format
 function checkCardNumber(cardNumber){
     var masterCardRegEx = /^5[1-5][0-9]{14}$|^2(?:2(?:2[1-9]|[3-9][0-9])|[3-6][0-9][0-9]|7(?:[01][0-9]|20))[0-9]{12}$/;
     var visaRegEx = /^3[47][0-9]{13}$/;
@@ -626,6 +586,8 @@ function checkCardNumber(cardNumber){
         return false;
     }
 }
+
+// validate cvv
 function checkCVV(cvv){
     var cvvRegex = /^[0-9]{3,4}$/;
     if (cvvRegex.test(cvv)){
@@ -638,6 +600,7 @@ function checkCVV(cvv){
     }
 }
 
+// validate month on credit card
 function checkMonth(){
     if (document.getElementById('monthPicker').value == 0){
         $('#monthPicker').removeClass("is-valid").addClass("is-invalid");
@@ -648,6 +611,8 @@ function checkMonth(){
         return true;
     }
 }
+
+// validate year on credit card
 function checkYear(){
     if (document.getElementById('yearPicker').value == 0){
         $('#yearPicker').removeClass("is-valid").addClass("is-invalid");
@@ -659,8 +624,7 @@ function checkYear(){
     }
 }
 
-
-
+// Change the header of checkout's steps
 function modalHeader(page){
     switch (page){
         case 0:
@@ -689,6 +653,7 @@ var autocomplete=new autocomplete({
 			<img width="24px" src="img/geocodelogo.svg"/> {{geocodeaddr}} <span class="float-right badge badge-warning"> > </span> </a>`
 
 });
+
 function jsfunction(data){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
